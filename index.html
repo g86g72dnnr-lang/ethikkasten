@@ -1,0 +1,612 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#EEF0F8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11152B" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ethik">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="robots" content="noindex, nofollow">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="apple-touch-icon.png">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}</style>
+<title>Ethik-Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Lexend:wght@400;500;600&display=swap">
+<style>
+  /* Layout: eine schmale Spalte wie eine Buchseite. Oben die Aufgabe, grosse Tippflaechen, Aktionen unten.
+     Einziges Motiv: ein goldener Maeander-Streifen (griechisches Schluesselmuster) unter dem Titel. */
+  :root {
+    --bg: #EEF0F8;
+    --surface: #FFFFFF;
+    --ink: #1B2340;
+    --muted: #59627F;
+    --line: #D2D8EA;
+    --accent: #3F4FB0;
+    --on-accent: #FFFFFF;
+    --accent-soft: #E1E5F7;
+    --gold: #E3B04B;
+    --gold-soft: #F6E7C2;
+    --on-gold: #43300A;
+    --good: #1F7A4D;
+    --on-good: #FFFFFF;
+    --good-bg: #DDF1E5;
+    --bad: #B4412F;
+    --bad-bg: #F8E0DB;
+    --display: 'Baloo 2', 'Trebuchet MS', system-ui, sans-serif;
+    --body: 'Lexend', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11152B; --surface: #1A2040; --ink: #E8EBF8; --muted: #A3ACCD; --line: #2E3662;
+      --accent: #8F9CFF; --on-accent: #0E1330; --accent-soft: #262E5A;
+      --gold: #E3B04B; --gold-soft: #4A3B1B; --on-gold: #F4E2B6;
+      --good: #6BCB93; --on-good: #08241A; --good-bg: #1A3A2A;
+      --bad: #F0907F; --bad-bg: #432622;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11152B; --surface: #1A2040; --ink: #E8EBF8; --muted: #A3ACCD; --line: #2E3662;
+    --accent: #8F9CFF; --on-accent: #0E1330; --accent-soft: #262E5A;
+    --gold: #E3B04B; --gold-soft: #4A3B1B; --on-gold: #F4E2B6;
+    --good: #6BCB93; --on-good: #08241A; --good-bg: #1A3A2A;
+    --bad: #F0907F; --bad-bg: #432622;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: var(--body); font-size: 16px; line-height: 1.5;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 14px 28px;
+    -webkit-text-size-adjust: 100%;
+  }
+  #app { max-width: 560px; margin-inline: auto; display: flex; flex-direction: column; gap: 16px; }
+  button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; line-height: 1.15; }
+  p { margin: 0; }
+  .muted { color: var(--muted); }
+  .small { font-size: .875rem; }
+  .center { text-align: center; }
+
+  .meander {
+    height: 12px; background: var(--gold); opacity: .9;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 12'%3E%3Cpath d='M0 11.2H14M3 11V1.2H13V8H7V5H10' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") repeat-x left / 14px 12px;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 12'%3E%3Cpath d='M0 11.2H14M3 11V1.2H13V8H7V5H10' fill='none' stroke='black' stroke-width='1.5'/%3E%3C/svg%3E") repeat-x left / 14px 12px;
+  }
+
+  .btn { min-height: 56px; border-radius: 16px; border: 2px solid transparent; font-weight: 600; font-size: 1.05rem; padding: 0 20px; width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .btn:active { transform: scale(.98); }
+  .btn.primary { background: var(--accent); color: var(--on-accent); }
+  .btn.ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+  .btn.warm { background: var(--gold); color: var(--on-gold); }
+  .btn.good { background: var(--good); color: var(--on-good); }
+  .btn.link { background: none; min-height: 44px; width: auto; color: var(--muted); font-size: .95rem; text-decoration: underline; text-underline-offset: 3px; }
+  .actions { display: grid; gap: 12px; padding-top: 8px; }
+  .actions.two { grid-template-columns: 1fr 1fr; }
+  .icon-btn { width: 48px; height: 48px; border-radius: 14px; border: 2px solid var(--line); background: var(--surface); display: grid; place-items: center; flex: none; color: var(--accent); }
+
+  .card { background: var(--surface); border: 2px solid var(--line); border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+  .tag { align-self: flex-start; background: var(--gold-soft); color: var(--on-gold); font-size: .72rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; }
+  .label { color: var(--muted); font-size: .9rem; }
+  .big { font-family: var(--display); font-weight: 800; font-size: clamp(1.5rem, 6.5vw, 2rem); line-height: 1.2; overflow-wrap: anywhere; text-wrap: balance; }
+  .ans-text { font-size: 1.08rem; line-height: 1.55; }
+  .ex { background: var(--gold-soft); color: var(--on-gold); border-radius: 14px; padding: 12px 14px; }
+  .ex b { display: block; font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; margin-bottom: 2px; font-weight: 600; }
+  .note { background: var(--accent-soft); border-radius: 12px; padding: 8px 12px; font-size: .875rem; }
+  .stage { display: flex; flex-direction: column; gap: 14px; }
+
+  .top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .brand h1 { font-size: 2.2rem; font-weight: 800; }
+  .brand p { color: var(--muted); }
+  .seg { display: inline-flex; border: 2px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--surface); flex: none; }
+  .seg button { min-height: 44px; padding: 0 14px; border: none; background: transparent; font-weight: 600; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+
+  .shead { display: flex; align-items: center; gap: 12px; }
+  .shead h1 { font-size: 1.6rem; }
+  .bar { flex: 1; height: 12px; border-radius: 8px; background: var(--line); overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--accent); border-radius: 8px; transition: width .25s ease; }
+  .count { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .9rem; min-width: 4ch; text-align: right; }
+
+  .count-card { align-items: center; text-align: center; gap: 2px; }
+  .count-card .num { font-family: var(--display); font-weight: 800; font-size: 4.2rem; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+  .count-card .lbl { font-family: var(--display); font-weight: 600; font-size: 1.25rem; }
+
+  .plan { display: grid; gap: 0; }
+  .prow { display: grid; grid-template-columns: 64px 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line); min-width: 0; }
+  .prow:first-child { border-top: none; }
+  .prow b { font-family: var(--display); font-size: 1.05rem; }
+  .prow.today { background: var(--accent-soft); border-radius: 12px; padding-inline: 10px; margin-inline: -10px; border-top-color: transparent; }
+  .prow.past { opacity: .6; }
+  .prow span.t { font-size: .9rem; min-width: 0; }
+  .chip { min-height: 44px; padding: 0 14px; border-radius: 12px; border: 2px solid var(--line); background: var(--surface); font-weight: 600; font-size: .9rem; }
+  .chip:active { transform: scale(.98); }
+  .chip.go { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .chip[aria-pressed="true"].ok { background: var(--good); border-color: var(--good); color: var(--on-good); }
+  .chip[aria-pressed="true"].more { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+
+  .meter { height: 12px; border-radius: 8px; background: var(--line); overflow: hidden; }
+  .meter span { display: block; height: 100%; background: var(--good); border-radius: 8px; }
+  .goals { display: grid; gap: 0; }
+  .goal { display: grid; gap: 10px; padding: 14px 0; border-top: 1px solid var(--line); }
+  .goal:first-child { border-top: none; }
+  .goal p { font-size: .95rem; }
+  .gbtns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .gh { font-size: .75rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); padding-top: 10px; }
+
+  .modes { display: grid; gap: 12px; }
+  .mode { display: grid; grid-template-columns: 1fr; gap: 2px; text-align: left; padding: 14px 18px; min-height: 72px; background: var(--surface); border: 2px solid var(--line); border-radius: 20px; width: 100%; }
+  .mode:active { transform: scale(.98); }
+  .mode strong { font-family: var(--display); font-size: 1.25rem; line-height: 1.15; }
+  .mode span { color: var(--muted); font-size: .875rem; }
+
+  .opts { display: grid; gap: 10px; }
+  .opt { text-align: left; min-height: 58px; padding: 12px 16px; border: 2px solid var(--line); border-radius: 16px; background: var(--surface); font-size: 1.02rem; font-weight: 500; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .opt:active { transform: scale(.98); }
+  .opt.ok { border-color: var(--good); background: var(--good-bg); }
+  .opt.no { border-color: var(--bad); background: var(--bad-bg); }
+  .opt:disabled { cursor: default; transform: none; color: var(--ink); }
+  .fb { border-radius: 16px; padding: 14px 16px; display: grid; gap: 6px; }
+  .fb.good { background: var(--good-bg); color: var(--good); }
+  .fb.bad { background: var(--bad-bg); color: var(--bad); }
+  .fb strong { font-family: var(--display); font-size: 1.25rem; }
+  .fb .why { color: var(--ink); font-size: 1rem; }
+
+  .result { align-items: center; text-align: center; padding-block: 28px; }
+  .stars { display: flex; gap: 8px; color: var(--line); }
+  .stars svg { width: 56px; height: 56px; }
+  .stars .on { color: var(--gold); animation: pop .4s ease backwards; }
+  .stars .on:nth-child(2) { animation-delay: .12s; }
+  .stars .on:nth-child(3) { animation-delay: .24s; }
+  @keyframes pop { from { transform: scale(.3) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
+  .list { display: grid; gap: 0; border: 2px solid var(--line); border-radius: 16px; overflow: hidden; background: var(--surface); }
+  .li { padding: 10px 14px; border-top: 1px solid var(--line); min-width: 0; overflow-wrap: anywhere; }
+  .li:first-child { border-top: none; }
+  .li .de { color: var(--muted); font-size: .9rem; }
+
+  .wlist { display: grid; gap: 10px; }
+  .wrow { display: grid; grid-template-columns: 1fr auto; gap: 10px; align-items: center; text-align: left; padding: 12px 16px; min-height: 64px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; width: 100%; }
+  .wrow span.q { font-size: .95rem; min-width: 0; }
+  .wrow .tag { font-size: .65rem; }
+  .starters { display: flex; flex-wrap: wrap; gap: 8px; }
+  textarea.input { width: 100%; min-height: 180px; border: 2px solid var(--line); border-radius: 16px; padding: 14px 16px; font: 400 1.05rem/1.5 var(--body); background: var(--surface); color: var(--ink); resize: vertical; }
+  textarea.input:focus { border-color: var(--accent); }
+  .switch { display: flex; align-items: flex-start; gap: 12px; min-height: 44px; font-size: .95rem; }
+  .switch input { width: 24px; height: 24px; accent-color: var(--accent); flex: none; margin-top: 2px; }
+  details.help { border: 2px solid var(--line); border-radius: 16px; padding: 4px 16px; background: var(--surface); }
+  details.help summary { min-height: 48px; display: flex; align-items: center; font-weight: 600; cursor: pointer; }
+  details.help .ex { margin-bottom: 12px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+    .btn:active, .mode:active, .opt:active, .chip:active { transform: none; }
+  }
+</style>
+
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Inhalte ---------- */
+  var EXAM = new Date(2026, 10, 11, 11, 30);
+
+  var GOALS = [
+    { id: 'g1', t: 'Inhalt und Ziele der Nikomachischen Ethik von Aristoteles in eigenen Worten wiedergeben', go: 'cards:ar' },
+    { id: 'g2', t: 'Erklären, warum das Schulfach Ethik so heißt', go: 'cards:ar' },
+    { id: 'g3', t: 'Mit Beispielen erklären, wie man laut Aristoteles zu einem glücklichen Leben gelangt', go: 'quiz:ar' },
+    { id: 'g4', t: 'Strebensethik (Aristoteles) und Sollensethik (Kant) unterscheiden', go: 'cards:ss' },
+    { id: 'g5', t: 'Fallbeispiele der Strebens- und Sollensethik zuordnen und die Zuordnung begründen', go: 'quiz:fall' },
+    { id: 'g6', t: 'Wissens-, Forschungs- und Denkfragen unterscheiden', go: 'cards:fr' },
+    { id: 'g7', t: 'Fragen den drei Fragetypen zuordnen und die Zuordnung begründen', go: 'quiz:fr' },
+    { id: 'e1', t: 'Eigene Beispiele erarbeiten (z. B. zu Strebens- und Sollensethik)', go: 'write', extra: true },
+    { id: 'e2', t: 'Beschreibungen und Erklärungen in ganzen Sätzen formulieren', go: 'write', extra: true },
+    { id: 'e3', t: 'Begründete Vermutungen aufstellen', go: 'write', extra: true },
+    { id: 'e4', t: 'Zu einer Frage Stellung nehmen, also die eigene Meinung sagen und begründen', go: 'write', extra: true }
+  ];
+
+  var PLAN = [
+    { d: 'Sa 7.11.', date: new Date(2026, 10, 7), t: 'Karten „Ethik & Aristoteles“, danach das Quiz dazu', go: 'cards:ar' },
+    { d: 'So 8.11.', date: new Date(2026, 10, 8), t: 'Karten „Strebens- & Sollensethik“, danach das Quiz mit den Fallbeispielen', go: 'cards:ss' },
+    { d: 'Mo 9.11.', date: new Date(2026, 10, 9), t: 'Karten „Fragetypen“, Quiz „Fragetypen“, eine Stellungnahme schreiben', go: 'cards:fr' },
+    { d: 'Di 10.11.', date: new Date(2026, 10, 10), t: 'Mix-Test, danach alles üben, was noch auf „Übe ich noch“ steht', go: 'test' },
+    { d: 'Mi 11.11.', date: new Date(2026, 10, 11), t: 'Klassenarbeit um 11:30 Uhr. Am Abend davor früh schlafen, nichts Neues mehr lernen.', go: '' }
+  ];
+
+  var DECKS = {
+    ar: { title: 'Ethik & Aristoteles', desc: 'Warum heißt das Fach so? Wer war Aristoteles? Wie wird man glücklich?', cards: [
+      { q: 'Warum heißt das Schulfach „Ethik“ so?', a: 'Das Wort „Ethik“ kommt vom griechischen Wort „ethos“. Das bedeutet Sitte, Gewohnheit und Charakter. Im Fach Ethik denken wir darüber nach, wie man gut handelt und gut zusammenlebt.' },
+      { q: 'Wer war Aristoteles?', a: 'Aristoteles war ein griechischer Philosoph. Er lebte vor mehr als 2000 Jahren. Er war der Lehrer von Alexander dem Großen.' },
+      { q: 'Was ist die „Nikomachische Ethik“?', a: 'Das ist ein Buch von Aristoteles. Darin geht es um gutes Handeln und um ein glückliches Leben. Man vermutet, dass es nach seinem Sohn Nikomachos benannt ist.' },
+      { q: 'Was ist laut Aristoteles das wichtigste Ziel im Leben?', a: 'Ein glückliches, gelungenes Leben. Nach diesem Ziel streben alle Menschen.', ex: 'Zusatz: Das griechische Wort dafür ist „eudaimonia“.' },
+      { q: 'Was ist eine Tugend?', a: 'Eine Tugend ist eine gute Charaktereigenschaft, zum Beispiel Mut, Ehrlichkeit, Großzügigkeit oder Fairness.' },
+      { q: 'Wie wird man laut Aristoteles glücklich?', a: 'Man übt gute Eigenschaften (Tugenden), bis sie zur Gewohnheit werden. Man denkt nach und handelt richtig. Auch gute Freunde gehören zu einem glücklichen Leben.', ex: 'Wer jeden Tag übt, ehrlich zu sein und anderen zu helfen, bekommt gute Freunde.' },
+      { q: 'Was bedeutet bei Aristoteles „die Mitte“?', a: 'Eine Tugend liegt in der Mitte zwischen „zu wenig“ und „zu viel“.', ex: 'Mut: zu wenig = Feigheit, zu viel = Übermut. Großzügigkeit: zu wenig = Geiz, zu viel = Verschwendung.' },
+      { q: 'Gib ein Beispiel dafür, wie man nach Aristoteles glücklich wird.', a: 'Mia möchte mutig werden. Jede Woche traut sie sich etwas Neues, zum Beispiel vor der Klasse zu sprechen. Mit der Zeit wird Mut zu ihrer Gewohnheit. Dadurch wird ihr Leben gelungener.', ex: 'Du kannst dir auch ein eigenes Beispiel ausdenken.' }
+    ] },
+    ss: { title: 'Strebens- & Sollensethik', desc: 'Aristoteles und Kant: Was ist der Unterschied?', cards: [
+      { q: 'Was ist Strebensethik?', a: 'Die Strebensethik fragt: Was brauche ich für ein gutes, glückliches Leben? Sie schaut auf unser Ziel und auf unseren Charakter. Aristoteles gehört zur Strebensethik.' },
+      { q: 'Was ist Sollensethik?', a: 'Die Sollensethik fragt: Was soll ich tun? Sie schaut auf Pflichten und Regeln, die für alle gelten, auch wenn ich keine Lust habe. Immanuel Kant gehört zur Sollensethik.' },
+      { q: 'Wer war Immanuel Kant?', a: 'Immanuel Kant war ein deutscher Philosoph (1724 bis 1804). Er lebte in Königsberg. Die Sollensethik kommt von ihm.' },
+      { q: 'Was ist der Unterschied zwischen Strebens- und Sollensethik?', a: 'Strebensethik: Ich will ein gutes Leben, deshalb übe ich gute Eigenschaften. Es geht um Ziel und Charakter. Sollensethik: Ich tue meine Pflicht, weil Regeln für alle gelten. Es geht um Pflicht und Regeln.' },
+      { q: 'Wie ordne ich ein Fallbeispiel zu?', a: 'Ich frage mich: Warum handelt die Person so? Wenn sie ein Ziel hat („Ich will ein guter Mensch sein und glücklich leben“), ist es Strebensethik. Wenn sie eine Pflicht oder Regel befolgt („Das muss man tun“), ist es Sollensethik. Dann sage ich: „Das ist …, weil …“' }
+    ] },
+    fr: { title: 'Fragetypen & Stellung nehmen', desc: 'Wissens-, Forschungs- und Denkfragen, Meinung begründen', cards: [
+      { q: 'Was ist eine Wissensfrage?', a: 'Eine Wissensfrage hat eine richtige Antwort. Man kann sie nachschlagen, zum Beispiel im Buch oder im Lexikon.', ex: 'Beispiel: Wie hoch ist der Mount Everest?' },
+      { q: 'Was ist eine Forschungsfrage?', a: 'Bei einer Forschungsfrage kennt man die Antwort noch nicht. Man findet sie heraus, indem man beobachtet, misst, ausprobiert oder andere befragt.', ex: 'Beispiel: Wie viele Kinder in unserer Klasse haben ein Haustier?' },
+      { q: 'Was ist eine Denkfrage?', a: 'Eine Denkfrage hat nicht nur eine richtige Antwort. Man muss nachdenken und seine Antwort begründen. Verschiedene Meinungen sind möglich.', ex: 'Beispiel: Ist es okay, bei einer Arbeit abzuschreiben?' },
+      { q: 'Wie nehme ich zu einer Frage Stellung?', a: 'Ich sage meine Meinung und begründe sie, zum Beispiel: „Ich finde, dass …, weil …“. Dazu nenne ich ein Beispiel und schreibe in ganzen Sätzen.' },
+      { q: 'Wie stelle ich eine begründete Vermutung auf?', a: 'Ich überlege, was stimmen könnte, und sage, warum. Zum Beispiel: „Ich vermute, dass …, weil …“' }
+    ] }
+  };
+
+  var FT = ['Wissensfrage', 'Forschungsfrage', 'Denkfrage'];
+  var ST = ['Strebensethik', 'Sollensethik'];
+  function mc(q, opts, why, tag) { return { q: q, opts: opts, a: 0, why: why, tag: tag || 'Frage', shuffle: true }; }
+  function ft(q, a, why) { return { q: q, label: 'Welcher Fragetyp ist das?', opts: FT, a: a, why: why, tag: 'Fragetyp', shuffle: false }; }
+  function fall(q, a, why) { return { q: q, label: 'Strebensethik oder Sollensethik?', opts: ST, a: a, why: why, tag: 'Fallbeispiel', shuffle: false }; }
+
+  var SETS = {
+    ar: { title: 'Quiz Aristoteles', items: [
+      mc('Warum heißt das Schulfach „Ethik“ so?', ['Das Wort kommt vom griechischen „ethos“ (Sitte, Gewohnheit, Charakter).', 'Das Wort kommt vom lateinischen „educare“ und bedeutet „lernen“.', 'Das Wort kommt vom deutschen „Ehre“.', 'Das Wort kommt aus dem Englischen und bedeutet „Regeln“.'], 'Ethik kommt vom griechischen „ethos“. Im Fach geht es um gutes Handeln und um das Zusammenleben.'),
+      mc('Was ist die „Nikomachische Ethik“?', ['Ein Buch von Aristoteles über gutes Handeln und das glückliche Leben.', 'Ein Gesetz aus Athen.', 'Ein Spiel der alten Griechen.', 'Ein Brief von Kant an seinen Sohn.'], 'Die Nikomachische Ethik ist ein Buch von Aristoteles. Man vermutet, dass es nach seinem Sohn Nikomachos benannt ist.'),
+      mc('Was ist laut Aristoteles das wichtigste Ziel im Leben?', ['Ein glückliches, gelungenes Leben.', 'Möglichst viel Geld.', 'Berühmt sein.', 'Immer nur Spaß haben.'], 'Aristoteles sagt: Alle Menschen streben nach einem glücklichen, gelungenen Leben.'),
+      mc('Wie lernt man laut Aristoteles eine Tugend?', ['Durch Üben, bis sie zur Gewohnheit wird.', 'Man wird mit ihr geboren.', 'Man liest einmal darüber.', 'Man bekommt sie geschenkt.'], 'Tugenden lernt man, indem man sie immer wieder übt. Dann werden sie zur Gewohnheit.'),
+      mc('Wo liegt der Mut nach Aristoteles?', ['In der Mitte zwischen Feigheit und Übermut.', 'Ganz bei der Feigheit.', 'Ganz beim Übermut.', 'In der Mitte zwischen Müdigkeit und Hunger.'], 'Eine Tugend liegt in der Mitte zwischen „zu wenig“ (Feigheit) und „zu viel“ (Übermut).'),
+      mc('Welches Paar zeigt „zu wenig“ und „zu viel“ bei der Großzügigkeit?', ['Geiz und Verschwendung', 'Mut und Angst', 'Fleiß und Faulheit', 'Wut und Freude'], 'Großzügigkeit liegt in der Mitte zwischen Geiz (zu wenig) und Verschwendung (zu viel).'),
+      mc('Wer war Aristoteles?', ['Ein griechischer Philosoph und Lehrer von Alexander dem Großen.', 'Ein deutscher Philosoph aus Königsberg.', 'Ein römischer Kaiser.', 'Ein englischer Lehrer.'], 'Aristoteles lebte vor über 2000 Jahren in Griechenland. Er war Lehrer von Alexander dem Großen.'),
+      mc('Was gehört nach Aristoteles auch zu einem glücklichen Leben?', ['Gute Freunde.', 'Möglichst viel Besitz.', 'Immer allein sein.', 'Nie nachdenken.'], 'Zu einem glücklichen Leben gehören gute Freunde, gute Eigenschaften und Nachdenken.'),
+      mc('Welche Eigenschaft ist eine Tugend?', ['Ehrlichkeit', 'Neid', 'Angeberei', 'Faulheit'], 'Ehrlichkeit ist eine gute Charaktereigenschaft, also eine Tugend. Neid, Angeberei und Faulheit nennt man Untugenden.')
+    ] },
+    fall: { title: 'Quiz Strebens- & Sollensethik', items: [
+      fall('Aristoteles gehört zur …', 0, 'Aristoteles gehört zur Strebensethik, weil es bei ihm um das Ziel eines glücklichen Lebens und um den Charakter geht.'),
+      mc('Welcher Philosoph steht für die Sollensethik?', ['Immanuel Kant', 'Aristoteles', 'Alexander der Große', 'Sokrates'], 'Die Sollensethik kommt von Immanuel Kant. Bei ihm geht es um Pflicht und Regeln.', 'Frage'),
+      mc('Welche Frage passt zur Strebensethik?', ['Was brauche ich für ein glückliches, gutes Leben?', 'Was ist meine Pflicht, egal ob ich Lust habe?', 'Wie hoch ist der Mount Everest?', 'Wer hat das Spiel gewonnen?'], 'Die Strebensethik fragt nach dem guten Leben. Die Frage nach der Pflicht gehört zur Sollensethik.'),
+      mc('Welche Aussage passt zur Sollensethik?', ['Es gibt Pflichten und Regeln, die für alle gelten.', 'Ich übe gute Eigenschaften, bis sie zur Gewohnheit werden.', 'Wichtig ist nur, dass ich Spaß habe.', 'Jeder darf machen, was er will.'], 'Die Sollensethik schaut auf Pflichten und Regeln, die für alle gelten. Das Üben guter Eigenschaften gehört zur Strebensethik.'),
+      fall('Lena hilft oft im Haushalt, weil sie ein hilfsbereiter Mensch werden möchte. Das gehört für sie zu einem guten Leben.', 0, 'Das ist Strebensethik, weil Lena ein Ziel hat: Sie will ein hilfsbereiter Mensch werden. Es geht um ihren Charakter und ihr gutes Leben.'),
+      fall('Tom bringt ein gefundenes Portemonnaie zurück, weil man fremdes Eigentum zurückgeben muss.', 1, 'Das ist Sollensethik, weil Tom nach einer Pflicht handelt. Die Regel „Fremdes Eigentum gibt man zurück“ gilt für alle.'),
+      fall('Ayla übt jeden Tag, ehrlich zu sein, weil sie mit guten Freunden glücklich leben möchte.', 0, 'Das ist Strebensethik, weil Ayla eine Tugend übt (Ehrlichkeit), um glücklich zu leben. Es geht um Ziel und Gewohnheit.'),
+      fall('Ben sagt die Wahrheit, weil Lügen immer verboten ist, auch wenn die Wahrheit unangenehm ist.', 1, 'Das ist Sollensethik, weil Ben eine Regel befolgt („Man darf nicht lügen“). Sie gilt für alle und immer.'),
+      fall('Mira traut sich, vor der Klasse zu sprechen, weil Mut zu einem gelungenen Leben gehört.', 0, 'Das ist Strebensethik, weil Mira die Tugend Mut übt. Ihr Ziel ist ein gelungenes Leben.'),
+      fall('Jonas schubst nicht, weil die Regel „Wir schubsen nicht“ für alle gilt, auch wenn er gerade keine Lust darauf hat.', 1, 'Das ist Sollensethik, weil Jonas einer Regel folgt, die für alle gilt. Seine Lust spielt keine Rolle.'),
+      fall('Sara teilt ihr Pausenbrot, weil sie ein großzügiger Mensch sein möchte.', 0, 'Das ist Strebensethik, weil Sara eine Tugend (Großzügigkeit) leben will. Es geht um ihren Charakter.'),
+      fall('Emil hält sein Versprechen, weil man ein Versprechen halten muss, egal was er davon hat.', 1, 'Das ist Sollensethik, weil Emil aus Pflicht handelt. „Versprechen hält man“ ist eine Regel für alle.'),
+      fall('Leo wartet an der roten Ampel, auch wenn kein Auto kommt, weil man sich an Gesetze halten muss.', 1, 'Das ist Sollensethik, weil Leo eine Regel befolgt, die für alle gilt.'),
+      fall('Hannah sucht sich Freunde, mit denen sie gut reden kann, weil Freundschaft für ein glückliches Leben wichtig ist.', 0, 'Das ist Strebensethik, weil es um Hannahs Ziel geht: ein glückliches Leben mit guten Freunden.')
+    ] },
+    fr: { title: 'Quiz Fragetypen', items: [
+      ft('Wie hoch ist der Mount Everest?', 0, 'Das ist eine Wissensfrage, weil man die Antwort nachschlagen kann. Es gibt nur eine richtige Antwort.'),
+      ft('Wann wurde Aristoteles geboren?', 0, 'Das ist eine Wissensfrage, weil man das Jahr im Buch oder im Lexikon nachschlagen kann.'),
+      ft('Wie viele Einwohner hat Berlin?', 0, 'Das ist eine Wissensfrage, weil die Zahl irgendwo nachzulesen ist. Es gibt eine richtige Antwort.'),
+      ft('Wer war Alexander der Große?', 0, 'Das ist eine Wissensfrage, weil man die Antwort nachschlagen kann.'),
+      ft('Wie heißt die Hauptstadt von Frankreich?', 0, 'Das ist eine Wissensfrage, weil es genau eine richtige Antwort gibt, die man nachschlagen kann.'),
+      ft('Wie viele Kinder in unserer Klasse haben ein Haustier?', 1, 'Das ist eine Forschungsfrage, weil man die Antwort herausfindet, indem man die Klasse befragt und zählt.'),
+      ft('Wie lange braucht ein Eiswürfel im Zimmer, bis er geschmolzen ist?', 1, 'Das ist eine Forschungsfrage, weil man es ausprobieren und die Zeit messen kann.'),
+      ft('Was essen die Kinder an unserer Schule in der Pause am häufigsten?', 1, 'Das ist eine Forschungsfrage, weil man eine Umfrage machen kann.'),
+      ft('Wächst eine Bohne am Fenster schneller als im dunklen Schrank?', 1, 'Das ist eine Forschungsfrage, weil man es mit einem Versuch beobachten und messen kann.'),
+      ft('Wie weit können die Kinder in unserer Klasse springen?', 1, 'Das ist eine Forschungsfrage, weil man es messen kann.'),
+      ft('Ist es okay, bei einer Klassenarbeit abzuschreiben?', 2, 'Das ist eine Denkfrage, weil es verschiedene Meinungen gibt. Man muss nachdenken und seine Antwort begründen.'),
+      ft('Was ist wichtiger: Freundschaft oder Erfolg?', 2, 'Das ist eine Denkfrage, weil es keine einzige richtige Antwort gibt. Man muss seine Meinung begründen.'),
+      ft('Was bedeutet es, ein guter Freund zu sein?', 2, 'Das ist eine Denkfrage, weil man darüber nachdenken muss. Jeder kann etwas anderes meinen.'),
+      ft('Darf man lügen, um jemanden zu schützen?', 2, 'Das ist eine Denkfrage, weil man verschiedene Gründe abwägen muss. Es gibt nicht nur eine richtige Antwort.'),
+      ft('Was ist Glück?', 2, 'Das ist eine Denkfrage, weil man sie nicht nachschlagen oder messen kann. Man muss nachdenken und begründen.'),
+      mc('Woran erkennt man eine Denkfrage?', ['Es gibt mehrere mögliche Antworten, und man muss sie begründen.', 'Die Antwort steht im Lexikon.', 'Man muss etwas messen oder ausprobieren.', 'Es gibt genau eine richtige Antwort.'], 'Bei einer Denkfrage sind verschiedene Meinungen möglich. Wichtig ist die Begründung.'),
+      mc('Woran erkennt man eine Forschungsfrage?', ['Man findet die Antwort durch Beobachten, Messen, Ausprobieren oder Befragen.', 'Die Antwort steht schon im Buch.', 'Jeder darf einfach raten.', 'Man muss die Antwort auswendig lernen.'], 'Bei einer Forschungsfrage muss man die Antwort selbst herausfinden, zum Beispiel mit einem Versuch oder einer Umfrage.'),
+      mc('Woran erkennt man eine Wissensfrage?', ['Es gibt eine richtige Antwort, die man nachschlagen kann.', 'Man muss ein Experiment machen.', 'Es gibt viele gleich gute Meinungen.', 'Man muss die ganze Klasse befragen.'], 'Eine Wissensfrage hat eine richtige Antwort, die schon bekannt ist und in einem Buch steht.')
+    ] }
+  };
+
+  var WGROUPS = [
+    { key: 'st', title: 'Stellung nehmen', tag: 'Meinung', starters: ['Ich finde, dass …', 'weil …', 'Zum Beispiel …', 'Andere denken, dass …'],
+      checks: ['Ich habe meine Meinung klar gesagt („Ich finde, dass …“).', 'Ich habe einen Grund genannt („weil …“).', 'Ich habe ein Beispiel genannt („zum Beispiel …“).', 'Ich habe in ganzen Sätzen geschrieben.'] },
+    { key: 'vm', title: 'Begründete Vermutung', tag: 'Vermutung', starters: ['Ich vermute, dass …', 'weil …', 'Zum Beispiel …'],
+      checks: ['Ich habe „Ich vermute, dass …“ geschrieben.', 'Ich habe gesagt, warum („weil …“).', 'Ich habe in ganzen Sätzen geschrieben.'] },
+    { key: 'bs', title: 'Eigenes Beispiel', tag: 'Beispiel', starters: ['Das ist Strebensethik, weil …', 'Das ist Sollensethik, weil …', 'Deshalb …'],
+      checks: ['In meinem Beispiel handelt eine Person in einer Situation.', 'Ich habe gesagt, warum sie so handelt (Ziel oder Pflicht).', 'Ich habe in ganzen Sätzen geschrieben.'] }
+  ];
+  var PROMPTS = [
+    { id: 's1', g: 'st', q: 'Welcher Fragetyp ist am schwierigsten zu beantworten: Wissensfrage, Forschungsfrage oder Denkfrage? Nimm Stellung.', ex: 'Ich finde, dass die Denkfrage am schwierigsten ist, weil es keine Antwort zum Nachschlagen gibt. Man muss selbst nachdenken und die Antwort begründen. Zum Beispiel kann man bei der Frage „Was ist Glück?“ ganz verschiedener Meinung sein.' },
+    { id: 's2', g: 'st', q: 'Was braucht man für ein glückliches Leben? Nimm Stellung und nutze, was Aristoteles gesagt hat.', ex: 'Ich finde, dass man gute Freunde braucht, weil man mit ihnen vieles teilen kann. Aristoteles sagt auch, dass man gute Eigenschaften wie Mut üben soll. Zum Beispiel wird man mutiger, wenn man sich öfter etwas traut.' },
+    { id: 's3', g: 'st', q: 'Soll man sich immer an Regeln halten? Nimm Stellung.', ex: 'Ich finde, dass man sich meistens an Regeln halten soll, weil sie für alle gelten und das Zusammenleben leichter machen. Zum Beispiel sorgt die Regel „Wir schubsen nicht“ dafür, dass sich niemand wehtut.' },
+    { id: 's4', g: 'st', q: 'Soll man immer die Wahrheit sagen? Nimm Stellung.', ex: 'Ich finde, dass man fast immer ehrlich sein soll, weil Freunde einem sonst nicht mehr vertrauen. Zum Beispiel glaubt mir ein Freund später nichts mehr, wenn ich ihn angelogen habe. Andere denken, dass es Ausnahmen gibt, wenn jemand in Gefahr ist.' },
+    { id: 'v1', g: 'vm', q: 'Warum hat Aristoteles wohl ein Buch über Ethik geschrieben? Stelle eine begründete Vermutung auf.', ex: 'Ich vermute, dass Aristoteles den Menschen helfen wollte, gut zu leben, weil er auch Lehrer war und sein Wissen weitergeben wollte.' },
+    { id: 'v2', g: 'vm', q: 'Was passiert, wenn alle immer nur das tun, was sie gerade wollen? Stelle eine begründete Vermutung auf.', ex: 'Ich vermute, dass es oft Streit gäbe, weil jeder etwas anderes will und niemand Rücksicht nimmt.' },
+    { id: 'b1', g: 'bs', q: 'Denk dir ein eigenes Beispiel für Strebensethik aus.', ex: 'Luca möchte ein großzügiger Mensch werden, weil das zu einem guten Leben gehört. Deshalb teilt er öfter sein Pausenbrot. Mit der Zeit wird Teilen für ihn zur Gewohnheit. Das ist Strebensethik, weil es um sein Ziel und seinen Charakter geht.' },
+    { id: 'b2', g: 'bs', q: 'Denk dir ein eigenes Beispiel für Sollensethik aus.', ex: 'Eva findet auf dem Schulhof ein Handy. Sie bringt es ins Sekretariat, weil man fremde Sachen zurückgeben muss. Das ist Sollensethik, weil sie eine Regel befolgt, die für alle gilt, auch wenn sie das Handy gern behalten würde.' }
+  ];
+
+  /* ---------- Speicher (nur dieses Gerät) ---------- */
+  var KEY = 'ethik-trainer-v1';
+  function fresh() { return { kid: 'julia', goals: { julia: {}, isabel: {} }, drafts: { julia: {}, isabel: {} } }; }
+  function load() {
+    var d = fresh();
+    try {
+      var r = JSON.parse(localStorage.getItem(KEY));
+      if (r && typeof r === 'object') {
+        if (r.kid === 'julia' || r.kid === 'isabel') d.kid = r.kid;
+        ['julia', 'isabel'].forEach(function (k) {
+          if (r.goals && r.goals[k]) d.goals[k] = r.goals[k];
+          if (r.drafts && r.drafts[k]) d.drafts[k] = r.drafts[k];
+        });
+      }
+    } catch (e) {}
+    return d;
+  }
+  var S = load();
+  function persist() { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} }
+
+  /* ---------- Helfer ---------- */
+  function $(s) { return document.querySelector(s); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function midnight(d) { var x = new Date(d.getTime()); x.setHours(0, 0, 0, 0); return x; }
+  function daysTo(d) { return Math.round((midnight(d) - midnight(new Date())) / 864e5); }
+  function kidName() { return S.kid === 'julia' ? 'Julia' : 'Isabel'; }
+  function myGoals() { return S.goals[S.kid] || (S.goals[S.kid] = {}); }
+  function draft(id) { var m = S.drafts[S.kid] || (S.drafts[S.kid] = {}); return m[id] || (m[id] = { t: '', c: [] }); }
+
+  var ICON = {
+    back: '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    star: '<svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="12,2 15,9 22,9.5 16.5,14 18.5,21 12,17 5.5,21 7.5,14 2,9.5 9,9" fill="currentColor"/></svg>',
+    check: '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    cross: '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>'
+  };
+
+  /* ---------- Zustand ---------- */
+  var view = 'home', session = null, wid = null;
+
+  /* ---------- Ansichten ---------- */
+  function vHome() {
+    var d = daysTo(EXAM), goals = myGoals();
+    var cd;
+    if (d > 0) cd = '<div class="num" aria-live="polite">' + d + '</div><div class="lbl">' + (d === 1 ? 'Tag' : 'Tage') + ' bis zur Klassenarbeit</div>';
+    else if (d === 0) cd = '<div class="lbl" style="font-size:1.6rem">Heute ist die Klassenarbeit.</div><div class="lbl">Viel Erfolg!</div>';
+    else cd = '<div class="lbl">Die Klassenarbeit ist vorbei.</div>';
+    var count = '<section class="card count-card" aria-label="Countdown">' + cd +
+      '<p class="muted small">Ethik 5ac · Mittwoch, 11.11., 11:30 bis 12:15 Uhr</p></section>';
+
+    var plan = PLAN.map(function (p) {
+      var dd = daysTo(p.date), cls = dd === 0 ? ' today' : dd < 0 ? ' past' : '';
+      return '<div class="prow' + cls + '"><b>' + p.d + '</b><span class="t">' + esc(p.t) + '</span>' +
+        (p.go && dd >= 0 ? '<button class="chip go" data-a="go" data-go="' + p.go + '" aria-label="Los: ' + esc(p.d) + '">Los</button>' : '<span></span>') + '</div>';
+    }).join('');
+    var planCard = '<section class="card"><h3 style="font-size:1.2rem">Plan bis Mittwoch</h3><p class="muted small">Jeden Tag etwa 15 bis 20 Minuten reichen.</p><div class="plan">' + plan + '</div></section>';
+
+    var can = GOALS.filter(function (g) { return goals[g.id] === 'can'; }).length;
+    var rows = '', lastExtra = false;
+    GOALS.forEach(function (g) {
+      if (g.extra && !lastExtra) { rows += '<div class="gh">Außerdem kann ich …</div>'; lastExtra = true; }
+      rows += '<div class="goal"><p>' + esc(g.t) + '</p><div class="gbtns">' +
+        '<button class="chip ok" data-a="goal" data-g="' + g.id + '" data-v="can" aria-pressed="' + (goals[g.id] === 'can') + '">Kann ich!</button>' +
+        '<button class="chip more" data-a="goal" data-g="' + g.id + '" data-v="more" aria-pressed="' + (goals[g.id] === 'more') + '">Übe ich noch</button>' +
+        '<button class="chip go" data-a="go" data-go="' + g.go + '">Üben</button></div></div>';
+    });
+    var pct = Math.round(can / GOALS.length * 100);
+    var check = '<section class="card"><h3 style="font-size:1.2rem">Ich kann …</h3>' +
+      '<p class="small"><b>' + can + ' von ' + GOALS.length + '</b> Lernzielen sicher</p>' +
+      '<div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><span style="width:' + pct + '%"></span></div>' +
+      '<p class="muted small">Das ist die Liste von deinem Zettel. Hake ehrlich ab: Nur wenn du es ohne Hilfe erklären kannst, ist es „Kann ich!“.</p>' +
+      '<div class="goals">' + rows + '</div></section>';
+
+    var modes = '<div class="modes">' +
+      '<button class="mode" data-a="go" data-go="test"><strong>Mix-Test</strong><span>12 Fragen gemischt aus allen Quiz</span></button>' +
+      '<button class="mode" data-a="go" data-go="write"><strong>Schreiben</strong><span>Stellung nehmen, Vermutungen und eigene Beispiele in ganzen Sätzen</span></button></div>';
+
+    return '<header class="brand top"><div><h1>Ethik-Trainer</h1><p>Klasse 5 · Klassenarbeit 1</p></div>' +
+      '<div class="seg" role="group" aria-label="Wer übt?">' +
+      '<button data-a="kid" data-id="julia" aria-pressed="' + (S.kid === 'julia') + '">Julia</button>' +
+      '<button data-a="kid" data-id="isabel" aria-pressed="' + (S.kid === 'isabel') + '">Isabel</button></div></header>' +
+      '<div class="meander" aria-hidden="true"></div>' +
+      '<p><b>Hallo, ' + kidName() + '!</b></p>' + count + planCard + check + modes +
+      '<p class="muted small">Die Inhalte sind einfach erklärt. Wenn auf euren Arbeitsblättern (14.10., 21.10., 4.11.) oder im Buch (S. 12 und 13) etwas anderes steht, gilt das Arbeitsblatt. Der Stand wird nur auf diesem Gerät gespeichert.</p>';
+  }
+
+  function head(title, pct, count) {
+    return '<div class="shead"><button class="icon-btn" data-a="quit" aria-label="Beenden">' + ICON.back + '</button>' +
+      (pct === null ? '<h1>' + esc(title) + '</h1>' :
+        '<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><span style="width:' + pct + '%"></span></div><span class="count">' + count + '</span>') + '</div>';
+  }
+
+  function vSession() {
+    var s = session, pct = Math.round(s.i / s.q.length * 100), h = head(s.title, pct, (s.i + 1) + '/' + s.q.length);
+    var it = s.q[s.i];
+    if (s.kind === 'cards') {
+      var c = it.c;
+      if (s.phase === 'front') {
+        return h + '<div class="stage"><section class="card"><span class="tag">' + esc(s.title) + '</span><div class="big">' + esc(c.q) + '</div></section>' +
+          '<p class="muted center">Antworte laut in ganzen Sätzen, in deinen eigenen Worten. Dann dreh die Karte um.</p></div>' +
+          '<div class="actions"><button class="btn primary" data-a="flip">Umdrehen</button></div>';
+      }
+      return h + '<div class="stage"><section class="card"><span class="tag">' + esc(s.title) + '</span><p class="label">' + esc(c.q) + '</p>' +
+        '<p class="ans-text">' + esc(c.a) + '</p>' + (c.ex ? '<div class="ex"><b>Beispiel</b>' + esc(c.ex) + '</div>' : '') + '</section>' +
+        '<p class="muted center small">Hast du es ungefähr so gesagt?</p></div>' +
+        '<div class="actions two"><button class="btn warm" data-a="again">Nochmal</button><button class="btn good" data-a="know">Gewusst</button></div>';
+    }
+    var q = it.it, done = s.phase === 'result';
+    var opts = it.opts.map(function (o, i) {
+      var cls = '', ic = '';
+      if (done) {
+        if (o.ok) { cls = ' ok'; ic = '<span style="color:var(--good)">' + ICON.check + '</span>'; }
+        else if (s.pick === i) { cls = ' no'; ic = '<span style="color:var(--bad)">' + ICON.cross + '</span>'; }
+      }
+      return '<button class="opt' + cls + '" data-a="opt" data-i="' + i + '"' + (done ? ' disabled' : '') + '><span>' + esc(o.t) + '</span>' + ic + '</button>';
+    }).join('');
+    var fb = '';
+    if (done) {
+      var ok = it.opts[s.pick].ok;
+      fb = '<div class="fb ' + (ok ? 'good' : 'bad') + '" role="status"><strong>' + (ok ? 'Richtig!' : 'Das war es noch nicht.') + '</strong>' +
+        '<span class="why"><b>Begründung:</b> ' + esc(q.why) + '</span>' +
+        '<span class="muted small">Sag die Begründung jetzt noch einmal laut in einem ganzen Satz.</span></div>';
+    }
+    return h + '<div class="stage"><section class="card"><span class="tag">' + esc(q.tag) + '</span>' +
+      (q.label ? '<p class="label">' + esc(q.label) + '</p>' : '') + '<div class="big">' + esc(q.q) + '</div></section>' +
+      '<div class="opts" role="group" aria-label="Antworten">' + opts + '</div>' + fb + '</div>' +
+      (done ? '<div class="actions"><button class="btn primary" data-a="next">Weiter</button></div>' : '');
+  }
+
+  function vResult() {
+    var s = session, ratio = s.total ? s.right / s.total : 0;
+    var stars = ratio >= 0.9 ? 3 : ratio >= 0.7 ? 2 : 1;
+    var txt = stars === 3 ? 'Sehr stark!' : stars === 2 ? 'Gut gemacht!' : 'Dranbleiben, das wird!';
+    var sv = '';
+    for (var i = 1; i <= 3; i++) sv += '<span class="' + (i <= stars ? 'on' : '') + '">' + ICON.star + '</span>';
+    var wrong = '';
+    if (s.kind === 'quiz') {
+      wrong = s.wrong.length
+        ? '<section class="card"><h3 style="font-size:1.15rem">Das üben wir noch</h3><div class="list">' + s.wrong.map(function (q) {
+            var right = q.opts[q.a];
+            return '<div class="li"><b>' + esc(q.q) + '</b><div class="de">Richtig: ' + esc(right) + '</div></div>';
+          }).join('') + '</div></section>'
+        : '<p class="center"><b>Kein einziger Fehler!</b></p>';
+    }
+    var again = s.id === 'test' ? '<button class="btn primary" data-a="go" data-go="test">Neuer Mix-Test</button>'
+      : '<button class="btn primary" data-a="go" data-go="' + s.go + '">Noch eine Runde</button>';
+    return '<div class="stage"><section class="card result"><div class="stars" aria-hidden="true">' + sv + '</div>' +
+      '<h2 style="font-size:1.8rem">' + txt + '</h2>' +
+      '<p><b>' + s.right + ' von ' + s.total + '</b> gleich ' + (s.kind === 'cards' ? 'gewusst' : 'richtig') + ', ' + kidName() + '.</p></section>' + wrong + '</div>' +
+      '<div class="actions">' + again + '<button class="btn ghost" data-a="quit">Fertig</button></div>';
+  }
+
+  function vWrite() {
+    var groups = WGROUPS.map(function (g) {
+      var rows = PROMPTS.filter(function (p) { return p.g === g.key; }).map(function (p) {
+        var has = draft(p.id).t.trim().length > 0;
+        return '<button class="wrow" data-a="wopen" data-id="' + p.id + '"><span class="q">' + esc(p.q) + '</span>' + (has ? '<span class="tag">Entwurf</span>' : '<span></span>') + '</button>';
+      }).join('');
+      return '<div class="gh">' + g.title + '</div><div class="wlist">' + rows + '</div>';
+    }).join('');
+    return head('Schreiben', null) +
+      '<p class="note">Schreibe in ganzen Sätzen. Dein Text wird auf diesem Gerät gespeichert und kann später weiter bearbeitet werden.</p>' + groups;
+  }
+
+  function vPrompt() {
+    var p = PROMPTS.filter(function (x) { return x.id === wid; })[0], g = WGROUPS.filter(function (x) { return x.key === p.g; })[0], d = draft(p.id);
+    var chips = g.starters.map(function (t) { return '<button class="chip" data-a="ins" data-t="' + esc(t) + '">' + esc(t) + '</button>'; }).join('');
+    var checks = g.checks.map(function (c, i) {
+      return '<label class="switch"><input type="checkbox" data-chk="' + i + '"' + (d.c[i] ? ' checked' : '') + '><span>' + esc(c) + '</span></label>';
+    }).join('');
+    return '<div class="shead"><button class="icon-btn" data-a="wback" aria-label="Zurück">' + ICON.back + '</button><h1>' + g.title + '</h1></div>' +
+      '<section class="card"><span class="tag">' + g.tag + '</span><div class="big" style="font-size:1.35rem">' + esc(p.q) + '</div></section>' +
+      '<div><p class="label" style="margin-bottom:6px">Satzanfänge zum Antippen:</p><div class="starters">' + chips + '</div></div>' +
+      '<label for="wtxt" class="sr">Deine Antwort</label>' +
+      '<textarea id="wtxt" class="input" placeholder="Schreibe hier deine Antwort …">' + esc(d.t) + '</textarea>' +
+      '<section class="card"><h3 style="font-size:1.1rem">Prüfe deinen Text</h3>' + checks + '</section>' +
+      '<details class="help"><summary>Beispielantwort ansehen</summary><div class="ex"><b>Beispiel</b>' + esc(p.ex) + '</div></details>' +
+      '<p class="muted small">Schreib zuerst selbst und schau dann erst nach. Dein Text muss nicht gleich sein, nur ähnlich gebaut.</p>';
+  }
+
+  /* ---------- Rendern ---------- */
+  function render() {
+    var h;
+    if (view === 'home') h = vHome();
+    else if (view === 'session') h = vSession();
+    else if (view === 'result') h = vResult();
+    else if (view === 'write') h = vWrite();
+    else h = vPrompt();
+    $('#app').innerHTML = h;
+    try { window.scrollTo(0, 0); } catch (e) {}
+  }
+  function keep() { var y = 0; try { y = window.scrollY; } catch (e) {} render(); try { window.scrollTo(0, y); } catch (e) {} }
+
+  /* ---------- Ablauf ---------- */
+  function prep(it) {
+    var o = it.opts.map(function (t, i) { return { t: t, ok: i === it.a }; });
+    if (it.shuffle) o = shuffle(o);
+    return { it: it, opts: o, retry: false };
+  }
+  function begin(kind, title, id, go, items) {
+    session = { kind: kind, title: title, id: id, go: go, q: items, i: 0, right: 0, total: 0, wrong: [], phase: kind === 'cards' ? 'front' : 'ask', pick: -1 };
+    view = 'session'; render();
+  }
+  function startDeck(id) {
+    var deck = DECKS[id];
+    begin('cards', deck.title, id, 'cards:' + id, shuffle(deck.cards.slice()).map(function (c) { return { c: c, retry: false }; }));
+  }
+  function startQuiz(id) {
+    var set = SETS[id];
+    begin('quiz', set.title, id, 'quiz:' + id, shuffle(set.items.slice()).slice(0, 10).map(prep));
+  }
+  function startTest() {
+    var all = [];
+    Object.keys(SETS).forEach(function (k) { all = all.concat(SETS[k].items); });
+    begin('quiz', 'Mix-Test', 'test', 'test', shuffle(all).slice(0, 12).map(prep));
+  }
+  function goTo(go) {
+    if (go === 'test') return startTest();
+    if (go === 'write') { view = 'write'; return render(); }
+    var p = go.split(':');
+    if (p[0] === 'cards' && DECKS[p[1]]) return startDeck(p[1]);
+    if (p[0] === 'quiz' && SETS[p[1]]) return startQuiz(p[1]);
+  }
+  function nextItem() {
+    var s = session; s.i++;
+    if (s.i >= s.q.length) { view = 'result'; render(); return; }
+    s.phase = s.kind === 'cards' ? 'front' : 'ask'; s.pick = -1; render();
+  }
+  function recordCard(ok) {
+    var s = session, it = s.q[s.i];
+    if (!it.retry) { s.total++; if (ok) s.right++; else s.q.push({ c: it.c, retry: true }); }
+  }
+
+  var act = {
+    kid: function (d) { S.kid = d.id; persist(); render(); },
+    goal: function (d) { var g = myGoals(); if (g[d.g] === d.v) delete g[d.g]; else g[d.g] = d.v; persist(); keep(); },
+    go: function (d) { goTo(d.go); },
+    quit: function () { session = null; view = 'home'; render(); },
+    flip: function () { session.phase = 'back'; render(); },
+    know: function () { recordCard(true); nextItem(); },
+    again: function () { recordCard(false); nextItem(); },
+    opt: function (d) {
+      var s = session, it = s.q[s.i], i = +d.i;
+      if (s.phase !== 'ask') return;
+      var ok = !!it.opts[i].ok;
+      if (!it.retry) {
+        s.total++;
+        if (ok) s.right++;
+        else { s.wrong.push(it.it); s.q.push(Object.assign(prep(it.it), { retry: true })); }
+      }
+      s.pick = i; s.phase = 'result'; render();
+    },
+    next: function () { nextItem(); },
+    wopen: function (d) { wid = d.id; view = 'wprompt'; render(); },
+    wback: function () { view = 'write'; render(); },
+    ins: function (d) {
+      var ta = $('#wtxt'); if (!ta) return;
+      var v = ta.value, add = (v && !/\s$/.test(v) ? ' ' : '') + d.t + ' ';
+      ta.value = v + add; draft(wid).t = ta.value; persist();
+      ta.focus(); try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) {}
+    }
+  };
+
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('[data-a]'); if (!t || t.disabled) return;
+    var f = act[t.dataset.a]; if (f) f(t.dataset);
+  });
+  document.addEventListener('input', function (e) {
+    if (e.target.id === 'wtxt' && wid) { draft(wid).t = e.target.value; persist(); }
+  });
+  document.addEventListener('change', function (e) {
+    var t = e.target;
+    if (t.dataset && t.dataset.chk !== undefined && wid) { draft(wid).c[+t.dataset.chk] = t.checked; persist(); }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
